@@ -84,4 +84,4 @@ SELECT * FROM tasks;
 
 ### SQLite Database
 
-![SQLite Database](docs/sqlite-database.png)
+![SQLite Database](docs/docs/sqlite-database.png)
