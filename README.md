@@ -1,6 +1,6 @@
 # Task API
 
-A simple CRUD API built with FastAPI and SQLite.
+A simple CRUD Task API built with FastAPI and PostgreSQL running in Docker.
 
 ## Features
 
@@ -9,72 +9,130 @@ A simple CRUD API built with FastAPI and SQLite.
 - Read a single task
 - Update tasks
 - Delete tasks
-- Data persists after server restarts using SQLite
+- Data persists after application and container restarts
+- PostgreSQL database running in Docker
 
 ## Technologies
 
 - Python
 - FastAPI
-- SQLite
-- sqlite3
+- PostgreSQL
+- Docker
+- Docker Compose
+- psycopg2
+- python-dotenv
 
-## Why SQLite?
+## Why PostgreSQL?
 
-SQLite was chosen because it is lightweight, requires no installation, and stores all data in a single database file. It is perfect for small backend projects and learning SQL.
+PostgreSQL was chosen because it is a powerful relational database commonly used in production applications. Running it inside Docker provides a consistent development environment and makes the application easy to set up on any machine.
 
-## Database
-
-The database file is stored in the project folder:
+## Project Structure
 
 ```
-tasks.db
+CodeBE01/
+│── main.py
+│── docker-compose.yml
+│── .env.example
+│── README.md
+│── docs/
+│   ├── docker-container.png
+│   ├── swagger-ui.png
 ```
 
-The application automatically:
+## Environment Variables
 
-- creates the database if it doesn't exist
-- creates the `tasks` table if missing
-- inserts three sample tasks on the first run only
+Create a `.env` file using `.env.example`.
 
-## Running the project
+Example:
 
-Create a virtual environment:
+```env
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=tasksdb
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/tasksdb
+```
+
+## Running the Project
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/kayakazitapane/be01-task-api.git
+```
+
+### 2. Navigate into the project
+
+```bash
+cd CodeBE01
+```
+
+### 3. Create a virtual environment
 
 ```bash
 python -m venv venv
 ```
 
-Activate it:
+### 4. Activate the virtual environment
 
-### Windows PowerShell
+Windows PowerShell:
 
 ```bash
 .\venv\Scripts\Activate.ps1
 ```
 
-Install dependencies:
+### 5. Install dependencies
 
 ```bash
-pip install fastapi uvicorn
+pip install fastapi uvicorn psycopg2-binary python-dotenv
 ```
 
-Run the API:
+### 6. Start PostgreSQL
+
+```bash
+docker compose up -d
+```
+
+### 7. Start the API
 
 ```bash
 uvicorn main:app --reload
 ```
 
-Open Swagger UI:
+### 8. Open Swagger UI
 
 ```
 http://127.0.0.1:8000/docs
 ```
 
-## Example SQL Query
+## Database
 
-```sql
-SELECT * FROM tasks;
-```
+- PostgreSQL 17
+- Running inside Docker
+- Data stored in a Docker volume
+- Database and table are created automatically if they do not exist
+- Three sample tasks are inserted only on the first run
+
+## Persistence Test
+
+The application was tested by:
+
+1. Creating a new task.
+2. Stopping the FastAPI application.
+3. Stopping the PostgreSQL Docker container.
+4. Restarting both the container and the application.
+5. Confirming that the created task still existed.
+
+This demonstrates that the data is permanently stored in PostgreSQL.
+
+## API Endpoints
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/tasks` | Get all tasks |
+| GET | `/tasks/{id}` | Get one task |
+| POST | `/tasks` | Create a task |
+| PUT | `/tasks/{id}` | Update a task |
+| DELETE | `/tasks/{id}` | Delete a task |
 
 ## Screenshots
 
@@ -82,6 +140,10 @@ SELECT * FROM tasks;
 
 ![Swagger UI](docs/docsswagger.png)
 
-### SQLite Database
+### Docker Container Running
 
-![SQLite Database](docs/sqlite-database.png)
+![Docker Container](docs/docker-container.png)
+
+### Tasks in PostgreSQL
+
+![PostgreSQL Tasks](docs/sqlite-database.png)
